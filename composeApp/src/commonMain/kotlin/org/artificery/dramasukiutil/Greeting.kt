@@ -1,0 +1,9 @@
+package org.artificery.dramasukiutil
+
+class Greeting {
+    private val platform = getPlatform()
+
+    fun greet(): String {
+        return "Hello, ${platform.name}!"
+    }
+}
