@@ -19,7 +19,7 @@ class TMDBMovieDataRepository(
     override suspend fun getMovieDataFromUrl(
         url: String,
     ): Flow<List<MovieData>> {
-        val scrapeFilesNamesFromTable = dataDataSukiFolderScrapper.scrapeFilesNamesFromTable(url).take(10)
+        val scrapeFilesNamesFromTable = dataDataSukiFolderScrapper.scrapeFilesNamesFromTable(url)
         if (scrapeFilesNamesFromTable.isEmpty()) {
             return flowOf(emptyList())
         }
