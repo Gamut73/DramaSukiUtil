@@ -25,10 +25,8 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "DramaSukiUtil",
     ) {
-        Scaffold {
             MaterialTheme {
                 MainScreen()
             }
-        }
     }
 }

@@ -13,9 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,80 +29,60 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import org.artificery.dramasukiutil.data.repository.MovieData
+import org.artificery.dramasukiutil.presentation.component.MovieDetailListComponent
 import org.artificery.dramasukiutil.presentation.model.MainScreenUIState
 import org.artificery.dramasukiutil.presentation.viewmodel.MainViewModel
 import org.koin.compose.koinInject
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = koinInject(),
 ) {
     val uiState by viewModel.uIState.collectAsState()
 
-    when(uiState) {
-        is MainScreenUIState.Search -> {
-            UrlEntryComponent(
-                onSearch = { url ->
-                    viewModel.getMovieDataFromUrl(url)
-                },
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Text("DramaSuki Util")
+                }
             )
         }
-        is MainScreenUIState.Loading -> {
-            LoadingComponent("Extracting movie data...")
-        }
-        is MainScreenUIState.MovieDataSuccess -> {
-            val movieDataList = (uiState as MainScreenUIState.MovieDataSuccess).movies
-            if (movieDataList.isNotEmpty()) {
-                LazyColumn {
-                    items(movieDataList) { movieData ->
-                        MovieDetailListComponent(data = movieData)
-                        Spacer(modifier = Modifier.height(16.dp))
+    ) { innerPadding ->
+        when(uiState) {
+            is MainScreenUIState.Search -> {
+                UrlEntryComponent(
+                    onSearch = { url ->
+                        viewModel.getMovieDataFromUrl(url)
+                    },
+                )
+            }
+            is MainScreenUIState.Loading -> {
+                LoadingComponent("Extracting movie data...")
+            }
+            is MainScreenUIState.MovieDataSuccess -> {
+                val movieDataList = (uiState as MainScreenUIState.MovieDataSuccess).movies
+                if (movieDataList.isNotEmpty()) {
+                    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                        items(movieDataList) { movieData ->
+                            MovieDetailListComponent(data = movieData)
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
+                } else {
+                    Text(text = "No movie data found.")
                 }
-            } else {
-                Text(text = "No movie data found.")
             }
         }
     }
 
-
-}
-
-
-@Composable
-fun MovieDetailListComponent(data: MovieData) {
-    with(data) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Row {
-                posterUrl?.let {
-                    AsyncImage(model = it, contentDescription = "Movie Poster")
-                }
-                Column {
-                    Text(
-                        text = "Title: $title",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        text = "Year: ${year ?: "N/A"}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Rating: ${rating ?: "N/A"}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(text = "Description: ${description ?: "No description available"}")
-                    if (alternativeTitle != null) {
-                        Text(text = "Alternative Title: $alternativeTitle")
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable

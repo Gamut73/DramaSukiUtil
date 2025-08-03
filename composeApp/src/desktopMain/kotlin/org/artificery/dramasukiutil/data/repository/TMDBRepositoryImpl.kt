@@ -19,7 +19,7 @@ class TMDBMovieDataRepository(
     override suspend fun getMovieDataFromUrl(
         url: String,
     ): Flow<List<MovieData>> {
-        val scrapeFilesNamesFromTable = dataDataSukiFolderScrapper.scrapeFilesNamesFromTable(url).shuffled().take(10)
+        val scrapeFilesNamesFromTable = dataDataSukiFolderScrapper.scrapeFilesNamesFromTable(url).take(10)
         if (scrapeFilesNamesFromTable.isEmpty()) {
             return flowOf(emptyList())
         }
@@ -80,6 +80,7 @@ class TMDBMovieDataRepository(
     }
 }
 
+//TODO: Move this to a TMDB API client
 suspend fun searchMovieByTitle(
     title: String,
     year: Int?,
@@ -99,7 +100,7 @@ suspend fun searchMovieByTitle(
             year = movie.releaseDate?.year,
             rating = movie.voteAverage,
             description = movie.overview,
-            posterUrl = movie.posterPath,
+            posterUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/${movie.posterPath}",
             alternativeTitle = movie.originalTitle
         )
     }
