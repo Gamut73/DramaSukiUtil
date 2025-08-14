@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +21,7 @@ import org.artificery.dramasukiutil.data.repository.MovieData
 @Composable
 fun MovieDetailListComponent(data: MovieData) {
     with(data) {
-        ElevatedCard(       
+        ElevatedCard(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 6.dp
@@ -37,10 +38,12 @@ fun MovieDetailListComponent(data: MovieData) {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = "Title: $title",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = "Title: $title",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                     Text(
                         text = "Year: ${year ?: "N/A"}",
                         style = MaterialTheme.typography.titleMedium
